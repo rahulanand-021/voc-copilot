@@ -1,0 +1,8 @@
+{
+  "name": "voc-copilot",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "google-play-scraper": "10.0.0"
+  }
+}
