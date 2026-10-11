@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Smoke test: Play Store reviews</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 24px auto; padding: 0 12px; }
+    .review { border-bottom: 1px solid #ddd; padding: 10px 0; }
+    .meta { color: #666; font-size: 13px; }
+    .error { color: #b00020; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Smoke test: Play Store reviews</h1>
+  <p id="status">Fetching reviews...</p>
+  <div id="list"></div>
+  <script>
+    fetch('/api/reviews')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var status = document.getElementById('status');
+        if (!data.ok) {
+          status.className = 'error';
+          status.textContent = 'FAILED after ' + data.seconds + ' seconds: ' + data.error;
+          return;
+        }
+        status.textContent = 'Got ' + data.count + ' reviews in ' + data.seconds + ' seconds.';
+        var list = document.getElementById('list');
+        data.reviews.forEach(function (r) {
+          var div = document.createElement('div');
+          div.className = 'review';
+          var meta = document.createElement('div');
+          meta.className = 'meta';
+          meta.textContent = r.score + ' stars | ' + r.date + ' | ' + r.thumbsUp + ' helpful';
+          var text = document.createElement('div');
+          text.textContent = r.text || '(no text)';
+          div.appendChild(meta);
+          div.appendChild(text);
+          list.appendChild(div);
+        });
+      })
+      .catch(function (e) {
+        var status = document.getElementById('status');
+        status.className = 'error';
+        status.textContent = 'FAILED: ' + e;
+      });
+  </script>
+</body>
+</html>
